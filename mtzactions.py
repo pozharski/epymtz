@@ -2,25 +2,27 @@ from pymtz import read_mtz_file
 import sys, os
 from scipy import array, isfinite, argsort, cumsum
 from matplotlib.pyplot import show, grid, figure, title, plot, cla, xlabel, ylabel
+import utils
 
-def testet(args):
+def testset(args):
     mtz = read_mtz_file(args.mtzin)
     sys.stdout.write('Generating the free flag column (%.1f%%)... ' % (100*args.free_fraction))
     mtz.GenerateFreeFlag(args.free, args.free_fraction)
     sys.stdout.write('done\n')
-    if os.access(args.mtzout, os.F_OK):
-        if args.force:
-            sys.stdout.write('Overwriting MTZ file (you did set --force flag)\n')
-        else:
-            sys.stdout.write('Overwrite MTZ file? Enter "yes" to confirm ')
-            if raw_input().lower() != 'yes':
-                sys.stdout.write('Phew... that was close...\n')
-                sys.exit(1)
-            else:
-                sys.stdout.write('Well, if you insist...\n')
-    sys.stdout.write('Writing the output MTZ file '+args.mtzout + '... ')
-    mtz.write(args.mtzout)
+    utils.mtzsave(mtz, args)
+
+def rotate_freeflag(args):
+    mtz = read_mtz_file(args.mtzin)
+    avlabels = mtz.GetLabels()
+    if args.free not in avlabels:
+        print 'Column '+args.free+' not found. Check input mtz-file and test set label selection.'
+        print 'Available columns:'
+        print ' '.join(avlabels)
+        return False
+    sys.stdout.write('Rotating the free flag column by %d... ' % (args.free_shift))
+    mtz.RotateFreeFlag(args.free, args.free_shift)
     sys.stdout.write('done\n')
+    utils.mtzsave(mtz, args)
 
 def rcompute(args):
     mtz = read_mtz_file(args.mtzin)

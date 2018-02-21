@@ -10,6 +10,7 @@ Detains on actions:
 
 testset             Generate a test set.
 rcompute            Compute R-values.
+rotate_freeflag     Rotate test set flags.
 '''
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter,
@@ -17,6 +18,7 @@ parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter,
 parser.add_argument('-a', '--action', action='append',
                     choices = [	'testset',
                                 'rcompute',
+                                'rotate_freeflag',
                                 ],
                     default = [],
                     metavar = '', help='Action to perform')
@@ -32,6 +34,7 @@ parser.add_argument("--fcalc", default='FC_ALL', help='Column label for Fcalc.')
 parser.add_argument("--sigfobs", default='SIGF', help='Column label for sigmaF.')
 parser.add_argument("-f", "--force", action="store_true", help='Force overwriting, no questions asked.  Dangerous.')
 parser.add_argument('--label-style', choices = ['refmac','phenix','buster','pdbredo'], help='Style of output column names')
+parser.add_argument('--free-shift', default=1, type=int, help='Amplitude of shift when rotating test set')
 
 args = parser.parse_args()
 

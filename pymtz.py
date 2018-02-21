@@ -1405,6 +1405,16 @@ class mtz:
                               fraction=self.GetTestFraction(label), 
                               style=self.GetTestStyle(label))
 
+    def RotateFreeFlag(self, label, shft=1):
+        ''' Rotates the test test by adding shft to the value for each
+            reflection, wrapped by the range of flags.  This can be
+            used to make refinement software to use a different test
+            set.  '''
+        flags = array(self.GetReflectionColumn(label)).astype(int)
+        trng = int(flags.ptp()+1)
+        flags = ((flags+shft).astype(int))%trng
+        self.SetReflectionColumn(label, flags)
+
     def ShrinkTestSet(self, label, new_fraction):
         ''' Reduces the size of the test set by resetting a random subset of the
             test set reflections. '''
