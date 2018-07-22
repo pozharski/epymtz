@@ -29,7 +29,7 @@ def read_mtz_header(mtzin):
 __size_real__    = {4:'f', 8:'d'}
 __size_complex__ = {4:'f', 8:'d'}
 __size_int__     = {2:'i', 4:'l'}
-__size_char__    = {1:'c', 2:'u'}
+__size_char__    = {1:'B', 2:'u'}
 
 ALLOWED_MTZ_COLUMN_TYPES = {
 'H': 'index h,k,l',
@@ -471,8 +471,8 @@ class mtz:
 
     def __init__(self, fname):
         fin = open(fname,'rb')
-        mtzstamp = readarray(fin, 'c', 4)
-        if mtzstamp.tostring() != 'MTZ ':
+        mtzstamp = readarray(fin, 'B', 4)
+        if mtzstamp.tobytes().decode() != 'MTZ ':
             raise TypeError(fname+' is not an MTZ-file')
         headerposition = readarray(fin)
         machinestamp =  readarray(fin, 'B', 4)
@@ -480,8 +480,8 @@ class mtz:
         fin.seek((headerposition[0]-1)*4)
         record_flag = True
         while record_flag:
-            record = readarray(fin, 'c', 80)
-            record_flag = self.assign_record(record.tostring())
+            record = readarray(fin, 'B', 80)
+            record_flag = self.assign_record(record.tobytes().decode())
             if record_flag == 'END':
                 historyposition = fin.tell()
                 record_flag = True
@@ -489,7 +489,7 @@ class mtz:
         f_batches = False
         fin.seek(historyposition)
         for i in range(nhis):
-            record = readarray(fin, 'c', 80)
+            record = readarray(fin, 'B', 80)
             hisline = record.tostring()
             if hisline[:7] == 'MTZBATS':
                 f_batches = True
@@ -498,7 +498,7 @@ class mtz:
                 self.history.append(record.tostring())
         if f_batches:
             while True:
-                record = readarray(fin, 'c', 80)
+                record = readarray(fin, 'B', 80)
                 keys = record.tostring().split()
                 if keys[0] == 'BH':
                     curb = int(keys[1])
@@ -538,7 +538,7 @@ class mtz:
         stamp.append(binarray.array('f').itemsize*16 + 
                      binarray.array('f').itemsize)
         stamp.append(binarray.array('i').itemsize*16 + 
-                     binarray.array('c').itemsize)
+                     binarray.array('B').itemsize)
         stamp.append(0)
         stamp.append(0)
         return stamp
@@ -1770,7 +1770,7 @@ class mtz:
 
     def write(self, fname):
         fout = open(fname,'wb')
-        mtzstamp = binarray.array('c')
+        mtzstamp = binarray.array('B')
         mtzstamp.fromstring('MTZ ')
         mtzstamp.tofile(fout)
         headerposition = binarray.array('I')
@@ -1928,7 +1928,7 @@ class MTZheader:
 
     def __init__(self, fname):
         fin = open(fname,'rb')
-        mtzstamp = readarray(fin, 'c', 4)
+        mtzstamp = readarray(fin, 'B', 4)
         if mtzstamp.tostring() != 'MTZ ':
             raise TypeError(fname+' is not an MTZ-file')
         headerposition = readarray(fin)
@@ -1941,7 +1941,7 @@ class MTZheader:
         fin.seek((headerposition[0]-1)*4)
         record_flag = True
         while record_flag:
-            record = readarray(fin, 'c', 80)
+            record = readarray(fin, 'B', 80)
             record_flag = self.assign_record(record.tostring())
             if record_flag == 'END':
                 historyposition = fin.tell()
@@ -1950,7 +1950,7 @@ class MTZheader:
         f_batches = False
         fin.seek(historyposition)
         for i in range(nhis):
-            record = readarray(fin, 'c', 80)
+            record = readarray(fin, 'B', 80)
             hisline = record.tostring()
             if hisline[:7] == 'MTZBATS':
                 f_batches = True
@@ -1959,7 +1959,7 @@ class MTZheader:
                 self.history.append(record.tostring())
         if f_batches:
             while True:
-                record = readarray(fin, 'c', 80)
+                record = readarray(fin, 'B', 80)
                 keys = record.tostring().split()
                 if keys[0] == 'BH':
                     curb = int(keys[1])
