@@ -15,9 +15,9 @@ def rotate_freeflag(args):
     mtz = read_mtz_file(args.mtzin)
     avlabels = mtz.GetLabels()
     if args.free not in avlabels:
-        print 'Column '+args.free+' not found. Check input mtz-file and test set label selection.'
-        print 'Available columns:'
-        print ' '.join(avlabels)
+        print('Column '+args.free+' not found. Check input mtz-file and test set label selection.')
+        print('Available columns:')
+        print(' '.join(avlabels))
         return False
     sys.stdout.write('Rotating the free flag column by %d... ' % (args.free_shift))
     mtz.RotateFreeFlag(args.free, args.free_shift)
@@ -30,17 +30,17 @@ def rcompute(args):
         args.dhigh = mtz.GetHighD()
     avlabels = mtz.GetLabels()
     if args.free not in avlabels:
-        print 'Column '+args.free+' not found. Check input mtz-file and test set label selection.'
-        print 'Available columns:'
-        print ' '.join(avlabels)
+        print('Column '+args.free+' not found. Check input mtz-file and test set label selection.')
+        print('Available columns:')
+        print(' '.join(avlabels))
     if args.fobs not in avlabels:
-        print 'Column '+args.fobs+' not found. Check input mtz-file and Fobs label selection.'
-        print 'Available columns:'
-        print ' '.join(avlabels)
+        print('Column '+args.fobs+' not found. Check input mtz-file and Fobs label selection.')
+        print('Available columns:')
+        print(' '.join(avlabels))
     if args.fcalc not in avlabels:
-        print 'Column '+args.fcalc+' not found. Check input mtz-file and Fcalc label selection.'
-        print 'Available columns:'
-        print ' '.join(avlabels)
+        print('Column '+args.fcalc+' not found. Check input mtz-file and Fcalc label selection.')
+        print('Available columns:')
+        print(' '.join(avlabels))
     else:
         d = array(mtz.GetResolutionColumn())
         fp, fc, sigf = mtz.GetReflectionColumns([args.fobs, args.fcalc, args.sigfobs])

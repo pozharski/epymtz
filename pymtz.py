@@ -473,7 +473,7 @@ class mtz:
         fin = open(fname,'rb')
         mtzstamp = readarray(fin, 'c', 4)
         if mtzstamp.tostring() != 'MTZ ':
-            raise TypeError, fname+' is not an MTZ-file'
+            raise TypeError(fname+' is not an MTZ-file')
         headerposition = readarray(fin)
         machinestamp =  readarray(fin, 'B', 4)
         self.__initialize()
@@ -967,12 +967,7 @@ class mtz:
 
     def GetS2(self, dset_id):
         (s11, s22, s33, s12, s13, s23) = self.GetDatasetCell(dset_id).get_scoeffs()
-        scol, hkl = [], zip(*[self.GetReflectionColumn('H'), 
-                                self.GetReflectionColumn('K'), 
-                                  self.GetReflectionColumn('L')])
-        for (h, k, l) in hkl:
-            scol.append(s11*h**2+s22*k**2+s33*l**2+s12*h*k+s13*h*l+s23*k*l)
-        return scol
+        return [s11*h**2+s22*k**2+s33*l**2+s12*h*k+s13*h*l+s23*k*l for h,k,l in zip(*[self.GetReflectionColumn('H'),self.GetReflectionColumn('K'),self.GetReflectionColumn('L')])]
 
     def GetReflectionColumn(self, label):
         ''' Return the vector of column values as a tuple.'''
@@ -1205,7 +1200,7 @@ class mtz:
     def ShellSplit(self, column, num=10, dset_id=-1):
         if dset_id < 0:
             dset_id = min(self.dcell.keys())
-        if type(column) in (str, unicode):
+        if type(column) == str:
             column = self.GetReflectionColumn(column)
         if column == None:
             return None
@@ -1557,7 +1552,7 @@ class mtz:
         pass
 
     def __dset_id_verify_(self, dset_id):
-        if dset_id not in self.dcell.keys():
+        if dset_id not in list(self.dcell.keys()):
             return min(self.dcell.keys())
         else:
             return dset_id
@@ -1568,7 +1563,7 @@ class mtz:
             that shells are in order from high to low resolution.'''
         d = array(self.GetResolutionColumn(dset_id))
         ind = ((num*d.argsort().argsort()).astype(float)/len(d)).astype(int)
-        return map(lambda k : nonzero(ind==k)[0], range(num))
+        return [nonzero(ind==k)[0] for k in range(num)]
 
     def shell_shuffle(self, labels, num=10, d_high=0.0, d_low=float('inf'), dset_id=-1):
         ''' Shuffles reflection values within each resolution shell.
@@ -1577,8 +1572,8 @@ class mtz:
         splitter = self.shell_splitter(num, dset_id)
         vectors = self.GetReflectionColumns(labels)
         d = self.GetResolutionColumn()
-        dmin, dmax = array(map(lambda k : (d[k].min(), d[k].max()), splitter)).T 
-        span = nonzero(map(lambda k : (d[k].min()>=d_high and d[k].max()<=d_low), splitter))[0]
+        dmin, dmax = array([(d[k].min(), d[k].max()) for k in splitter]).T
+        span = nonzero([(d[k].min()>=d_high and d[k].max()<=d_low) for k in splitter])[0]
         for ind in array(splitter)[span]:
             for vector in vectors:
                 vector.put(ind, vector[permutation(ind)])
@@ -1935,7 +1930,7 @@ class MTZheader:
         fin = open(fname,'rb')
         mtzstamp = readarray(fin, 'c', 4)
         if mtzstamp.tostring() != 'MTZ ':
-            raise TypeError, fname+' is not an MTZ-file'
+            raise TypeError(fname+' is not an MTZ-file')
         headerposition = readarray(fin)
         machinestamp =  readarray(fin, 'B', 4)
         self.records = {
@@ -1984,13 +1979,13 @@ class MTZheader:
         elif key == 'TITLE':
             self.records[key.lower()] = value.strip().ljust(70)
         elif key in ['NCOL', 'SORT']:
-            self.records[key.lower()] = map(int, value.split())
+            self.records[key.lower()] = [int(x) for x in value.split()]
         elif key == 'CELL':
-            self.records[key.lower()] = map(float, value.split())
+            self.records[key.lower()] = [float(x) for x in value.split()]
         elif key == 'SYMINF':
             self.records[key.lower()] = SymmInfo(value)
         elif key == 'SYMM':
-            self.records[key.lower()].append(SymmetryOperator(map(lambda x : x.strip(), value.split(','))))
+            self.records[key.lower()].append(SymmetryOperator([x.strip() for x in value.split(',')]))
         elif key == 'RESO':
             self.records[key.lower()] = sorted(map(float, value.split()[:2]))
         elif key == 'VALM':
@@ -2005,7 +2000,7 @@ class MTZheader:
             self.records['dsets'].insert(dset, key.lower(), name)
         elif key == 'DCELL':
             dset = value.split()[0]
-            cellprms = map(float, value.split()[1:])
+            cellprms = [float(x) for x in value.split()[1:]]
             self.records['dsets'].insert(dset, key.lower(), cellprms)
         elif key == 'DWAVEL':
             dset = value.split()[0]

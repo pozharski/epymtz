@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import sys, os
 
@@ -89,7 +89,7 @@ if options.mtzin:
 else:
     mtzin=args[0]
     if not mtzin:
-        print "mtztrick -h for help"
+        print("mtztrick -h for help")
         sys.exit()
 
 from pyshakerr.pymtz import read_mtz_file
@@ -103,7 +103,7 @@ if not options.dlow:
 
 if options.rprint:
     if options.free not in mtz.GetLabels():
-        print 'Column '+options.free+' not found. Check input mtz-file and test set label selection.'
+        print('Column '+options.free+' not found. Check input mtz-file and test set label selection.')
     else:
         d = array(mtz.GetResolutionColumn())
         fp, fc = mtz.GetReflectionColumns([options.fobs, options.fcalc])
@@ -127,17 +127,17 @@ if options.colprint:
 
 if options.freeprint:
     if options.free not in mtz.GetLabels():
-        print 'Column '+options.free+' not found. Check input mtz-file and test set label selection.'
+        print('Column '+options.free+' not found. Check input mtz-file and test set label selection.')
     else:
-        print '--------------------'
-        print 'Test set information'
-        print 'Label:    '+options.free
+        print('--------------------')
+        print('Test set information')
+        print('Label:    '+options.free)
         info = mtz.GetTestInfo(options.free)
         if info:
-            print 'Style:    %s\nFraction: %.2f\nSize:     %d' % info
+            print('Style:    %s\nFraction: %.2f\nSize:     %d' % info)
         else:
-            print 'Test set style unknown'
-        print '--------------------'
+            print('Test set style unknown')
+        print('--------------------')
 
 if options.genfree:
     sys.stdout.write('Generating the free flag column (%.1f%%)... ' % (100*options.freefrac))
@@ -168,7 +168,7 @@ if options.mtzout:
             sys.stdout.write('Overwriting MTZ file (you did set --force flag)\n')
         else:
             sys.stdout.write('Overwrite MTZ file? Enter "yes" to confirm ')
-            if raw_input().lower() != 'yes':
+            if input().lower() != 'yes':
                 sys.stdout.write('Phew... that was close...\n')
                 sys.exit(1)
             else:

@@ -22,9 +22,7 @@ def symop_trs(symn, fidentity=False):
     ''' Returns the array of translation vectors for all the symmetry operators
         of the space group defined by number, symn. The fidentity flag defines
         if the identity operator is included in the list.'''
-    trs = []
-    for symm in symops[symn]:
-        trs.append(array(symm(0, 0, 0)))
+    trs = [array(symm(0, 0, 0)) for symm in symops[symn]]
     if not fidentity:
         trs.pop(0)
     return array(trs)
@@ -40,9 +38,7 @@ def symop_rots(symn, fidentity=False):
     ''' Returns the list of rotation matrices for all the symmetry operators
         of the space group defined by number, symn. The fidentity flag defines
         if the identity operator is included in the list.'''
-    rots = []
-    for symm in symops[symn]:
-        rots.append(symop_rot(symm))
+    rots = [symop_rot(symm) for symm in symops[symn]]
     if not fidentity:
         rots.pop(0)
     return rots
@@ -55,9 +51,7 @@ def phase_shifts(symn, fidentity=False):
     ''' Returns the list of phase shifts (in degrees) for all the symmetry 
         operators of the space group defined by number, symn. The fidentity 
         flag defines if the identity operator is included in the list.'''
-    shfts = []
-    for symm in symops[symn]:
-        shfts.append(M2PI*array(symm(0, 0, 0)))
+    shfts = [M2PI*array(symm(0, 0, 0)) for symm in symops[symn]]
     if not fidentity:
         shfts.pop(0)
     return shfts

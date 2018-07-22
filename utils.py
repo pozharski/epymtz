@@ -8,7 +8,7 @@ def mtzsave(mtz, args):
             sys.stdout.write('Overwriting MTZ file (you did set --force flag)\n')
         else:
             sys.stdout.write('Overwrite MTZ file? Enter "yes" to confirm ')
-            if raw_input().lower() != 'yes':
+            if input().lower() != 'yes':
                 sys.stdout.write('Phew... that was close...\n')
                 sys.exit(1)
             else:

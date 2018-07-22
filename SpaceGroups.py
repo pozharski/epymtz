@@ -244,7 +244,7 @@ sg = {"P1": 1,
 "IM-3M": 229,
 "IA-3D": 230}
 
-sgN = dict([(v, k)  for (k, v) in sg.iteritems()])
+sgN = dict([(v, k)  for (k, v) in sg.items()])
 
 def sgNumber(line):
     return sg.get(line, 0)
@@ -492,7 +492,7 @@ xHM = {
 2018:  'P 21 2 21',
 3018:  'P 2 21 21'}
 
-xHMN = dict([(v, k)  for (k, v) in xHM.iteritems()])
+xHMN = dict([(v, k)  for (k, v) in xHM.items()])
 
 asus = {
   1 : ((0.0, 1.0), (0.0, 1.0), (0.0, 1.0)),
