@@ -9,8 +9,7 @@ import array as binarray
 from scipy import zeros, array, nonzero, logical_not, sqrt, exp
 from scipy import logical_and, cosh, log, sign, matrix, intersect1d
 from scipy import unique, choose, setdiff1d, isinf, ones, pi, isfinite
-from scipy import nanmin, nanmax, ceil
-from scipy.stats import nanmean
+from scipy import nanmin, nanmax, ceil, nanmean
 from scipy.special import i0, erf
 from scipy.integrate import quad
 from numpy.random import randn, permutation, randint

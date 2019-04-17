@@ -2,8 +2,7 @@
 
 import sys, os
 
-from scipy.stats import nanmean
-from scipy import array
+from scipy import array, nanmean
 
 from optparse import OptionParser
 parser = OptionParser()
