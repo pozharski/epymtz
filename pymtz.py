@@ -974,7 +974,7 @@ class mtz:
         if colind == None:
             return None
         else:
-            return zip(*self.reflections)[colind]
+            return list(zip(*self.reflections))[colind]
 #            column = []
 #            for reflection in self.reflections:
 #                column.append(reflection[colind])
@@ -1782,50 +1782,50 @@ class mtz:
         for reflection in self.reflections:
             refs.extend(reflection)
         refs.tofile(fout)
-        fout.write(('VERS '+self.mtzversion).ljust(80))
-        fout.write(('TITLE '+self.mtztitle.ljust(70)[:70]).ljust(80))
+        fout.write(('VERS '+self.mtzversion).ljust(80).encode())
+        fout.write(('TITLE '+self.mtztitle.ljust(70)[:70]).ljust(80).encode())
         fout.write(('NCOL %8d %12d %8d' 
-                                % (self.ncol, self.nref, self.nbat)).ljust(80))
+                                % (self.ncol, self.nref, self.nbat)).ljust(80).encode())
         fout.write(('CELL  %9.4f %9.4f %9.4f %9.4f %9.4f %9.4f' 
-                                % (self.globalcell.get_cell())).ljust(80))
+                                % (self.globalcell.get_cell())).ljust(80).encode())
         fout.write(('SORT  %3d %3d %3d %3d %3d' 
-                                % tuple(self.sortorder)).ljust(80))
+                                % tuple(self.sortorder)).ljust(80).encode())
         fout.write(("SYMINF  %2d %2d %c %5d           '%s' %s" 
                                 % (self.syminfo.get_nsym(), 
                                     self.syminfo.get_nprim(), 
                                      self.syminfo.get_lattice_type(), 
                                       self.syminfo.get_spacegroup_number(), 
                                        self.syminfo.get_spacegroup_name(), 
-                                self.syminfo.get_pointgroup_name())).ljust(80))
+                                self.syminfo.get_pointgroup_name())).ljust(80).encode())
         for symop in self.symm:
-            fout.write(('SYMM '+symop.get_line()).ljust(80))
+            fout.write(('SYMM '+symop.get_line()).ljust(80).encode())
         fout.write(('RESO %9.6f    %9.6f' 
-                                % (self.lowres, self.highres)).ljust(80))
-        fout.write(('VALM %s' % self.missflag).ljust(80))
+                                % (self.lowres, self.highres)).ljust(80).encode())
+        fout.write(('VALM %s' % self.missflag).ljust(80).encode())
         for col in self.columns:
             fout.write(('COLUMN ' + col.get_label().ljust(30) + 
                                                 ' %c  %16.4f  %16.4f %4d' 
                                 % (col.get_type(), 
                                     col.get_min(), 
                                      col.get_max(),
-                                      col.get_dataset_id())).ljust(80)[:80])
-        fout.write(('NDIF    %5d' % self.ndat).ljust(80))
+                                      col.get_dataset_id())).ljust(80)[:80].encode())
+        fout.write(('NDIF    %5d' % self.ndat).ljust(80).encode())
         for dset_id in self.projects.keys():
             fout.write(('PROJECT %7d %s' 
-                            % (dset_id, self.projects[dset_id])).ljust(80)[:80])
+                            % (dset_id, self.projects[dset_id])).ljust(80)[:80].encode())
             fout.write(('CRYSTAL %7d %s' 
-                            % (dset_id, self.crystals[dset_id])).ljust(80)[:80])
+                            % (dset_id, self.crystals[dset_id])).ljust(80)[:80].encode())
             fout.write(('DATASET %7d %s' 
-                            % (dset_id, self.datasets[dset_id])).ljust(80)[:80])
+                            % (dset_id, self.datasets[dset_id])).ljust(80)[:80].encode())
             fout.write(('DCELL   %7d  %9.4f %9.4f %9.4f %9.4f %9.4f %9.4f' 
                             % (tuple([dset_id]) + 
-                                    self.dcell[dset_id].get_cell())).ljust(80))
+                                    self.dcell[dset_id].get_cell())).ljust(80).encode())
             fout.write(('DWAVEL  %7d %10.5f' 
-                            % (dset_id, self.dwavel[dset_id])).ljust(80))
-        fout.write('END'.ljust(80))
+                            % (dset_id, self.dwavel[dset_id])).ljust(80).encode())
+        fout.write('END'.ljust(80).encode())
         for history_item in self.history:
-            fout.write(history_item)
-        fout.write('MTZENDOFHEADERS'.ljust(80))
+            fout.write(history_item.encode())
+        fout.write('MTZENDOFHEADERS'.ljust(80).encode())
         fout.close()
 
     def CNSWrite(self, fname, fp='FP', sigfp='SIGFP', 
