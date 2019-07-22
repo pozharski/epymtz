@@ -64,3 +64,19 @@ def rcompute(args):
         grid()
         show()
         
+def filter_columns(args):
+    mtz = read_mtz_file(args.mtzin)
+    for label in set(mtz.GetLabels()).difference(args.cols.split(','), ['H','K','L']):
+        mtz.DeleteColumn(label)
+    utils.mtzsave(mtz, args)
+
+def info(args):
+    mtz = read_mtz_file(args.mtzin)
+    print("Columns: "+','.join(mtz.GetLabels()))
+    print("Resolution range: ",mtz.GetLowD(),mtz.GetHighD())
+
+def scale_columns(args):
+    mtz = read_mtz_file(args.mtzin)
+    for label in args.cols.split(','):
+        mtz.ScaleColumn(label, args.scale)
+    utils.mtzsave(mtz, args)

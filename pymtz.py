@@ -1824,7 +1824,7 @@ class mtz:
                             % (dset_id, self.dwavel[dset_id])).ljust(80).encode())
         fout.write('END'.ljust(80).encode())
         for history_item in self.history:
-            fout.write(history_item.encode())
+            fout.write(history_item)
         fout.write('MTZENDOFHEADERS'.ljust(80).encode())
         fout.close()
 

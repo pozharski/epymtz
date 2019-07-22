@@ -11,6 +11,8 @@ Detains on actions:
 testset             Generate a test set.
 rcompute            Compute R-values.
 rotate_freeflag     Rotate test set flags.
+filter_columns      Output only a selection of columns
+info                Print mtz file information
 '''
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter,
@@ -19,6 +21,9 @@ parser.add_argument('-a', '--action', action='append',
                     choices = [	'testset',
                                 'rcompute',
                                 'rotate_freeflag',
+                                'filter_columns',
+                                'scale_columns',
+                                'info',
                                 ],
                     default = [],
                     metavar = '', help='Action to perform')
@@ -35,6 +40,8 @@ parser.add_argument("--sigfobs", default='SIGF', help='Column label for sigmaF.'
 parser.add_argument("-f", "--force", action="store_true", help='Force overwriting, no questions asked.  Dangerous.')
 parser.add_argument('--label-style', choices = ['refmac','phenix','buster','pdbredo'], help='Style of output column names')
 parser.add_argument('--free-shift', default=1, type=int, help='Amplitude of shift when rotating test set')
+parser.add_argument('--cols', help="List of columns selected for a particular operation")
+parser.add_argument("--scale", type=float, help='Scale factor.')
 
 args = parser.parse_args()
 
