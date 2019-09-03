@@ -483,7 +483,7 @@ class mtz:
             record_flag = self.assign_record(record.tobytes().decode())
             if record_flag == 'END':
                 historyposition = fin.tell()
-                record_flag = True
+                record_flag = False
         nhis = int((fin.tell()-historyposition)/80)-1
         f_batches = False
         fin.seek(historyposition)
@@ -1021,15 +1021,7 @@ class mtz:
     def GetReflectionColumns(self, labels):
         ''' Returns the list where each element is an array of values from the
             columns that correspond to the labels from the argument.''' 
-        x = array(self.reflections).T
-        columns = []
-        for label in labels:
-            colind = self.GetColumnIndex(label)
-            if colind == None:
-                columns.append(None)
-            else:
-                columns.append(x[colind])
-        return columns
+        return array(self.reflections).T[nonzero([(t in labels) for t in self.GetLabels()])[0]].T
 
     def GetHKLArray(self):
         return array(self.GetReflectionColumns('HKL')).T
@@ -1186,14 +1178,11 @@ class mtz:
     def GetShellColumn(self, num=10, dset_id=-1):
         if dset_id < 0:
             dset_id = min(self.dcell.keys())
-        shells = self.GetResolutionShells(num, dset_id)
+        shells = self.GetResolutionShells(num, dset_id) if type(num)==int else num
         d = self.GetResolutionColumn(dset_id)
-        shid = []
-        for dd in d:
-            for (i, edge) in enumerate(shells):
-                if dd >= edge:
-                    shid.append(i)
-                    break
+        shid = zeros(self.GetReflectionNumber())
+        for edge in shells[1:-1]:
+            shid += (d<edge).astype(int)
         return shid
 
     def ShellSplit(self, column, num=10, dset_id=-1):
