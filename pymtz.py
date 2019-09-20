@@ -1072,9 +1072,9 @@ class mtz:
 
     def hash2hkl(self, hsh, base=1000):
         ''' Converts reflection hash to miller indices. '''
-        sgntr = hsh / base**3 - 1
-        return (choose(array([sgntr % 2, sgntr/2 % 2, sgntr/4]), [-1, 1]) * 
-                       array([hsh/base**2 % base, hsh/base % base, hsh % base]))
+        sgntr = int(hsh / base**3 - 1)
+        return (choose(array([sgntr % 2, sgntr/2 % 2, sgntr/4]).astype(int), [-1, 1]) * 
+                       array([hsh/base**2 % base, hsh/base % base, hsh % base]).astype(int))
 
     def hklindex(self, hkl, base=1000):
         listik = []

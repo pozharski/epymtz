@@ -88,7 +88,7 @@ def main():
     shell_column = dataset.GetShellColumn(edges)
     d12, cc12, sp12, p12, Ish = [], [], [], [], []
     for i in range(Nshells):
-        Ish1, Ish2 = [], []
+        Ish1, Ish2, shkl = [], [], []
         shind = (shell_column == i)
         for ash in  set(ashes[shind]):
             mcity = len(hkldict[ash])
@@ -100,11 +100,12 @@ def main():
                 wr = random.permutation(wr)
                 Ish1.append(sum(wr*Ihl[hkldict[ash]]*whl[hkldict[ash]])/sum(wr*whl[hkldict[ash]]))
                 Ish2.append(sum((1-wr)*Ihl[hkldict[ash]]*whl[hkldict[ash]])/sum((1-wr)*whl[hkldict[ash]]))
+                shkl.append(dataset.hash2hkl(ash))
         cc12.append(corrcoef(Ish1, Ish2)[0][1])
         sp12t, p12t = spearmanr(Ish1, Ish2)
         sp12.append(sp12t)
         p12.append(p12t)
-        Ish.append([Ish1,Ish2])
+        Ish.append([Ish1,Ish2,shkl])
         d12.append(dataset.GetResolutionColumn()[shind].mean())
         print("%4d %7.2f %7.2f %7.2f %8d %5.3f %5.3f %6.3g" % (i+1, edges[i], edges[i+1], d12[-1] , sum(shind), cc12[-1], sp12t, p12t))
     Ish_fig = figure(FigureClass=KDWindow)
