@@ -13,6 +13,8 @@ from scipy import nanmin, nanmax, ceil, nanmean
 from scipy.special import i0, erf
 from scipy.integrate import quad
 from numpy.random import randn, permutation, randint
+import numpy as np
+import gzip
 
 import symoputils
 from helper import readarray, list_to_float, list_to_int, list_to_strip
@@ -988,7 +990,17 @@ class mtz:
         for (i,label) in enumerate(self.GetLabels()):
             columns[label] = x[i]
         return columns
-            
+
+    def savenpy(self, fname, fOverwrite=False, fCompressed=False):
+        z = np.ndarray((self.nref,), dtype = [(label,'<f8') for label in self.GetLabels()])
+        for i,r in enumerate(self.reflections):
+            z[i] = tuple(r)
+        if not fOverwrite:
+            assert not os.access(fname, os.F_OK), "File "+fname+" exists, overwrite prevented."
+        method = gzip.open if fCompressed else open
+        with method(fname,'wb') as fout:
+            np.save(fout, z)
+
     def nancorr(self, label1, label2):
         ''' Returns the correlation coefficient between the two columns.''' 
         col1, col2 = self.GetColumnIndex(label1), self.GetColumnIndex(label2)
