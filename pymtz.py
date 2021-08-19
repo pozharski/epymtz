@@ -18,6 +18,17 @@ import gzip
 
 import symoputils
 from helper import readarray, list_to_float, list_to_int, list_to_strip
+import npymtz
+
+def read_npymtz_file(npymtzin):
+    ''' 
+        Helper function that reads npymtz-file and returns the npymtz object.
+        Input file could be an mtz, in which case a conversion is performed.
+    '''
+    try:
+        return npymtz.dataset(fname=npymtzin)
+    except:
+        return read_mtz_file(npymtzin).getnpy()
 
 def read_mtz_file(mtzin):
     ''' Helper function that reads mtz-file and returns the mtz object.'''
@@ -991,15 +1002,23 @@ class mtz:
             columns[label] = x[i]
         return columns
 
-    def savenpy(self, fname, fOverwrite=False, fCompressed=False):
-        z = np.ndarray((self.nref,), dtype = [(label,'<f8') for label in self.GetLabels()])
+    def savenpy(self, fname, fOverwrite=False, fCompressed=False, fIncludeD=True):
+        z = np.ndarray((self.nref,), dtype = [(label,'<f8') for label in self.GetLabels()]+[('DSPACING','<f8')])
+        d = self.GetResolutionColumn()
         for i,r in enumerate(self.reflections):
-            z[i] = tuple(r)
+            z[i] = tuple(r)+tuple([d[i]])
         if not fOverwrite:
             assert not os.access(fname, os.F_OK), "File "+fname+" exists, overwrite prevented."
         method = gzip.open if fCompressed else open
         with method(fname,'wb') as fout:
             np.save(fout, z)
+
+    def getnpy(self, fIncludeD=True):
+        z = np.ndarray((self.nref,), dtype = [(label,'<f8') for label in self.GetLabels()]+[('DSPACING','<f8')])
+        d = self.GetResolutionColumn()
+        for i,r in enumerate(self.reflections):
+            z[i] = tuple(r)+tuple([d[i]])
+        return npymtz.dataset(data=z)
 
     def nancorr(self, label1, label2):
         ''' Returns the correlation coefficient between the two columns.''' 
